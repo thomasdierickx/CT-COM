@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebRTC</title>
+  <style>
+    video {
+      max-width: 100%;
+      height: auto;
+    }
+  
+    body {
+      margin: 0 auto;
+    }
+  
+    .section {
+      width: 100vw;
+  
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-start;
+    }
+  
+    .left {
+      width: 40vw;
+      padding: 2rem;
+    }
+  
+    .right {
+      width: 60vw;
+      height: 100vh;
+      background-color: #555;
+  
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 15rem;
+    }
+  
+    .lightsaber {
+      position: relative;
+    }
+  
+    .saber {
+      position: relative;
+      width: 6px;
+      height: 180px;
+      border-radius: 6px/10px;
+      color: white;
+      background-color: white;
+      box-shadow: 0px 0px 10px,
+        0px 0px 2px inset;
+      transform: scale(2) rotate(-45deg) scale(-1, 1);
+      animation: glow 1.5s linear infinite;
+  
+    }
+  
+    .saber:before {
+      content: "";
+      position: absolute;
+      left: -1px;
+      top: 175px;
+      width: 8px;
+      height: 12px;
+      background-image: linear-gradient(to right,
+          transparent 1px,
+          rgba(255, 255, 255, 0.4) 1px,
+          rgba(255, 255, 255, 0.8) 3px,
+          rgba(255, 255, 255, 0.3) 4px,
+          rgba(0, 0, 0, 0.2) 7px,
+          transparent 7px),
+        linear-gradient(to bottom,
+          orange 3px, black 3px, black 4px,
+          transparent 4px, transparent 8px,
+          black 8px, black 9px, orange 9px,
+          orange 11px, black 11px, black 12px),
+        linear-gradient(to left,
+          transparent 1px, orange 1px,
+          orange 7px, transparent 7px);
+      box-shadow: 1px 25px 0px 0px #555,
+        2px 25px 0px 0px silver,
+        2px 25px 0px 1px #222;
+  
+    }
+  
+    .saber:after {
+      position: absolute;
+      top: 187px;
+      left: -1px;
+      width: 8px;
+      height: 60px;
+      background-image:
+        linear-gradient(to right,
+          rgba(255, 255, 255, 0) 0px,
+          rgba(255, 255, 255, 0.7) 2px,
+          rgba(255, 255, 255, 0.2) 3px,
+          rgba(0, 0, 0, 0.5) 8px),
+        linear-gradient(to bottom, grey 5px, black 5px,
+          grey 6px, grey 7px, black 7px,
+          grey 8px, grey 9px, black 9px,
+          grey 10px, grey 11px, black 11px,
+          grey 12px, grey 16px,
+          black 16px, black 17px,
+          orange 17px, orange 20px,
+          black 20px, black 21px, transparent 21px,
+          transparent 57px, black 57px, orange 58px),
+        linear-gradient(to right,
+          silver 1px, black 1px, black 2px,
+          transparent 3px, transparent 3px,
+          silver 3px, silver 5px, black 5px, grey 6px,
+          transparent 6px, transparent 7px,
+          silver 7px, silver 8px),
+        linear-gradient(to bottom,
+          grey 0px, grey 60px);
+      content: "";
+    }
+
+    .name {
+      font-size: 1.5rem;
+      color: white;
+      font-weight: 400;
+    }
+  </style>
+</head>
+<body>
+  <section class="section">
+    <article class="left">
+      <div>
+        <h1>Receiver</h1>
+        <video id="otherCamera" playsinline autoplay muted></video>
+        <p id="othermessage"></p>
+      </div>
+    </article>
+    <article class="right">
+      <div class="saber"></div>
+      <div class="name" id="name"></div>
+    </article>
+  </section>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/simple-peer/9.7.2/simplepeer.min.js" integrity="sha512-RZlErEuUwWv3EhGNhvni9vinu0QPwNU0OyWAlhTeezEToTZu/C+/Mn7ItRFmpcf8MTK0J2kRalSfzrpQqF7wJQ==" crossorigin="anonymous"></script>
+  <script type="module">
+
+    const $otherCamera = document.getElementById('otherCamera');
+    const $othermessage = document.getElementById('othermessage');
+    const $name = document.getElementById('name');
+    const $saber = document.querySelector('.saber');
+
+    let socket;
+    let peer;
+
+    const servers = {
+      iceServers: [{
+        urls: `stun:stun.l.google.com:19302`
+      }]
+    };
+
+    const init = async () => {
+      initSocket();
+      $otherCamera.addEventListener('click', () => {
+        $otherCamera.play();
+      });
+      socket.on('message', message => {
+        console.log(`Received message: ${message}`);
+        $name.innerHTML = `${message}`;
+      });
+      socket.on('color', color => {
+        console.log(`Received color: ${color}`);
+        $saber.style.backgroundColor = `${color}`;
+        $saber.style.color = `${color}`;
+      });
+    };
+
+    const initSocket = () => {
+      socket = io.connect(`/`);
+      socket.on(`connect`, () => {
+        console.log(socket.id);
+      });
+      
+      socket.on('signal', async (myId, signal, peerId) => {
+        console.log(`Received signal from ${peerId}`);
+        console.log(signal);
+        if (signal.type === 'offer') {
+          answerPeerOffer(myId, signal, peerId);
+        }
+        peer.signal(signal);
+      });
+    };
+
+    const answerPeerOffer = async (myId, offer, peerId) => {
+      peer = new SimplePeer();
+      peer.on('signal', data => {
+        socket.emit('signal', peerId, data);
+      });
+      peer.on('stream', stream => {
+        $otherCamera.srcObject = stream;
+      });
+    };
+
+    init();
+
+  </script>
+</body>
+</html>
