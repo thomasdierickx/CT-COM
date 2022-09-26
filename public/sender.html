@@ -34,6 +34,8 @@
       <input id="msgInput" type="text" name="msgInput" class="form__input" /><br />
       <label for="colorInput" class="label">Pick a color</label><br />
       <input id="colorInput" type="color" name="colorInput" class="form__input" /><br />
+      <label for="rangeInput" class="label">Pick a range</label><br />
+      <input type="range" id="rangeInput" min="1" max="360" value="180"><br />
       <button type="submit" class="btn">Send Message</button>
     </form>
   </div>
@@ -47,7 +49,8 @@
 
     const $msgForm = document.getElementById('msgForm');
     const $msgInput = document.getElementById('msgInput');
-      const $colorInput = document.getElementById('colorInput');
+    const $colorInput = document.getElementById('colorInput');
+    const $rangeInput = document.getElementById('rangeInput');
 
     let message = $msgInput.value;
 
@@ -70,6 +73,7 @@
       // $myCamera.onloadedmetadata = () => $myCamera.play();
       socket.on('message', message => { console.log(`Received message: ${message}`); });
       socket.on('color', color => {console.log(`You choose this color: ${color}`); })
+      socket.on('range', range => { console.log(`You choose this range: ${range}`); })
       $msgForm.addEventListener('submit', e => handleSubmitMessage(e));
     };
 
@@ -77,8 +81,10 @@
       e.preventDefault();
       socket.emit('message', $msgInput.value);
       socket.emit('color', $colorInput.value);
+      socket.emit('range', $rangeInput.value);
       $msgInput.value = '';
       $colorInput.value = '';
+      $rangeInput.value = '180';
     };
 
     const initSocket = () => {

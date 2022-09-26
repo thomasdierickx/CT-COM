@@ -31,6 +31,11 @@ io.on('connection', socket => {
   socket.on('color', color => {
     console.log(`Received color: ${color}`);
     io.emit('color', color);
+  });
+
+  socket.on('range', range => {
+    console.log(`Received this range: ${range}`);
+    io.emit('range', range);
   })
 
   socket.on('disconnect', () => {
