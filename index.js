@@ -38,6 +38,21 @@ io.on('connection', socket => {
     io.emit('range', range);
   })
 
+  socket.on('alpha', alpha => {
+    console.log(`Received this alpha: ${alpha}`);
+    io.emit('alpha', alpha);
+  })
+
+  socket.on('beta', beta => {
+    console.log(`Received this beta: ${beta}`);
+    io.emit('beta', beta);
+  })
+
+  socket.on('gamma', gamma => {
+    console.log(`Received this gamma: ${gamma}`);
+    io.emit('gamma', gamma);
+  })
+
   socket.on('disconnect', () => {
     delete clients[socket.id];
     io.emit('clients', clients);

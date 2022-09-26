@@ -129,6 +129,9 @@
         <h1>Receiver</h1>
         <video id="otherCamera" playsinline autoplay muted></video>
         <p id="othermessage"></p>
+        <p id="sensorA"></p>
+        <p id="sensorB"></p>
+        <p id="sensorG"></p>
       </div>
     </article>
     <article class="right">
@@ -144,6 +147,9 @@
     const $othermessage = document.getElementById('othermessage');
     const $name = document.getElementById('name');
     const $saber = document.querySelector('.saber');
+    const $sensorA = document.querySelector('.sensorA');
+    const $sensorB = document.querySelector('.sensorB');
+    const $sensorG = document.querySelector('.sensorG');
 
     let socket;
     let peer;
@@ -172,6 +178,18 @@
         console.log(`Received range: ${range}`);
         $saber.style.height = `${range}px`;
         // $saber.style.transform = `scale(2) rotate(${range}deg) scale(-1, 1)`
+      });
+      socket.on('alpha', alpha => {
+        console.log(`Received alpha: ${alpha}`);
+        $sensorA.innerHTML = `${alpha}`;
+      });
+      socket.on('beta', beta => {
+        console.log(`Received beta: ${beta}`);
+        $sensorB.innerHTML = `${beta}`;
+      });
+      socket.on('gamma', gamma => {
+        console.log(`Received gamma: ${gamma}`);
+        $sensorG.innerHTML = `${gamma}`;
       });
     };
 

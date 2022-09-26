@@ -85,7 +85,28 @@
       $msgInput.value = '';
       $colorInput.value = '';
       $rangeInput.value = '180';
+      // window.addEventListener('deviceorientation', (e) => {
+      //   const alpha = e.alpha;
+      //   const beta = e.beta;
+      //   const gamma = e.gamma;
+
+      //   console.log(alpha, beta, gamma);
+      //   socket.emit(alpha, beta, gamma);
+      // });
     };
+
+    window.addEventListener('deviceorientation', e => handleOrientation(e));
+
+      const handleOrientation = (e) => {
+        const alpha = e.alpha;
+        const beta = e.beta;
+        const gamma = e.gamma;
+        // Do stuff...
+
+        socket.emit('alpha', alpha);
+        socket.emit('beta', beta);
+        socket.emit('gamma', gamma);
+      }
 
     const initSocket = () => {
       socket = io.connect('/');
