@@ -24,34 +24,24 @@ const clients = {};
 io.on('connection', socket => {
   clients[socket.id] = { id: socket.id };
   socket.on(`message`, message => {
-    console.log(`Received message: ${message}`);
     io.emit('message', message);
   });
 
   socket.on('color', color => {
-    console.log(`Received color: ${color}`);
     io.emit('color', color);
   });
 
   socket.on('range', range => {
-    console.log(`Received this range: ${range}`);
     io.emit('range', range);
   })
 
-  socket.on('alpha', alpha => {
-    console.log(`Received this alpha: ${alpha}`);
-    io.emit('alpha', alpha);
+  socket.on('orientation', (alpha, beta, gamma) => {
+    io.emit('orientation', alpha, beta, gamma);
   })
 
-  socket.on('beta', beta => {
-    console.log(`Received this beta: ${beta}`);
-    io.emit('beta', beta);
-  })
-
-  socket.on('gamma', gamma => {
-    console.log(`Received this gamma: ${gamma}`);
-    io.emit('gamma', gamma);
-  })
+  socket.on('checkBoxNew', checkBoxNew => {
+    io.emit('checkBoxNew', checkBoxNew);
+  });
 
   socket.on('disconnect', () => {
     delete clients[socket.id];

@@ -31,12 +31,12 @@
       width: 60vw;
       height: 100vh;
       background-color: #555;
-  
+
       display: flex;
-      align-items: center;
       justify-content: center;
-      flex-direction: column;
-      gap: 15rem;
+      align-items: center;
+
+      overflow: hidden;
     }
   
     .lightsaber {
@@ -45,23 +45,20 @@
   
     .saber {
       position: absolute;
-      width: 6px;
-      height: 180px;
+      width: .6rem;
+      height: 1rem;
       border-radius: 6px/10px;
       color: white;
       background-color: white;
       box-shadow: 0px 0px 10px,
         0px 0px 2px inset;
-      transform: scale(2) rotate(-45deg) scale(-1, 1);
     }
   
-    .saber:before {
+    .hilt1 {
       content: "";
       position: absolute;
-      left: -1px;
-      top: 175px;
-      width: 8px;
-      height: 12px;
+      width: .7rem;
+      height: 2rem;
       background-image: linear-gradient(to right,
           transparent 1px,
           rgba(255, 255, 255, 0.4) 1px,
@@ -83,12 +80,10 @@
   
     }
   
-    .saber:after {
+    .hilt2 {
       position: absolute;
-      top: 187px;
-      left: -1px;
-      width: 8px;
-      height: 60px;
+      width: .8rem;
+      height: 6rem;
       background-image:
         linear-gradient(to right,
           rgba(255, 255, 255, 0) 0px,
@@ -118,7 +113,20 @@
     .name {
       font-size: 1.5rem;
       color: white;
-      font-weight: 400;
+      font-weight: bold;
+      font-family: sans-serif;
+
+      position: absolute;
+      top: 2rem;
+    }
+
+    .outline {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 10rem;
+
+      position: absolute;
     }
   </style>
 </head>
@@ -132,10 +140,15 @@
         <p id="sensorA"></p>
         <p id="sensorB"></p>
         <p id="sensorG"></p>
+        <input type="button" id="button"> Click me </input>
       </div>
     </article>
     <article class="right">
-      <div class="saber"></div>
+      <div class="outline">
+        <div class="saber"></div>
+        <div class="hilt1"></div>
+        <div class="hilt2"></div>
+      </div>
       <div class="name" id="name"></div>
     </article>
   </section>
@@ -146,6 +159,7 @@
     const $otherCamera = document.getElementById('otherCamera');
     const $othermessage = document.getElementById('othermessage');
     const $name = document.getElementById('name');
+    const $saberOutline = document.querySelector('.outline');
     const $saber = document.querySelector('.saber');
     const $sensorA = document.getElementById('sensorA');
     const $sensorB = document.getElementById('sensorB');
@@ -160,40 +174,51 @@
       }]
     };
 
+    const $button = document.getElementById('button');
+    let audio = new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/18515/Lightsaber_sound_effect_-_medium_(mp3cut.net).mp3');
+    audio.loop = true;
+
     const init = async () => {
       initSocket();
+      $button.addEventListener('click', () => {
+        audio.play();
+      });
       $otherCamera.addEventListener('click', () => {
         $otherCamera.play();
       });
       socket.on('message', message => {
-        console.log(`Received message: ${message}`);
         $name.innerHTML = `${message}`;
       });
       socket.on('color', color => {
-        console.log(`Received color: ${color}`);
         $saber.style.backgroundColor = `${color}`;
         $saber.style.color = `${color}`;
       });
       socket.on('range', range => {
-        console.log(`Received range: ${range}`);
-        $saber.style.height = `${range}px`;
-        // $saber.style.transform = `scale(2) rotate(${range}deg) scale(-1, 1)`
+        // Verandert de lengte van het saber
+        $saber.style.height = `${range}rem`;
+        $saber.style.transitionDuration = "1s all"
       });
-      socket.on('alpha', alpha => {
-        console.log(`Received alpha: ${alpha}`);
+
+      socket.on('checkBoxNew', checkBoxNew => {
+        console.log(checkBoxNew);
+      })
+
+      socket.on('orientation', (alpha, beta, gamma) => {
+        // Test of ze worden ingeladen
+        console.log(`Received: ${alpha}, ${beta}, ${gamma}`);
+
+        // Orientatie weergeven
         $sensorA.innerHTML = `${alpha}`;
-        $saber.style.transform = `rotate(${alpha}deg)`; 
-      });
-      socket.on('beta', beta => {
-        console.log(`Received beta: ${beta}`);
         $sensorB.innerHTML = `${beta}`;
-        $saber.style.left = `${beta}rem`;
-      });
-      socket.on('gamma', gamma => {
-        console.log(`Received gamma: ${gamma}`);
         $sensorG.innerHTML = `${gamma}`;
-        $saber.style.top = `${gamma}rem`;
-      });
+
+        // Gaat naar links of rechts
+        $saberOutline.style.left = `${alpha}rem`;
+        // Gaat naar boven of beneden
+        $saberOutline.style.top = `${beta}rem`
+        // Saber draait naargelang de gebruiker zijn smartphone draait
+        $saberOutline.style.transform = `rotate(${gamma}deg)`
+      })
     };
 
     const initSocket = () => {
