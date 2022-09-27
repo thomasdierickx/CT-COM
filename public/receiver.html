@@ -44,7 +44,7 @@
     }
   
     .saber {
-      position: relative;
+      position: absolute;
       width: 6px;
       height: 180px;
       border-radius: 6px/10px;
@@ -147,10 +147,10 @@
     const $othermessage = document.getElementById('othermessage');
     const $name = document.getElementById('name');
     const $saber = document.querySelector('.saber');
-    const $sensorA = document.querySelector('.sensorA');
-    const $sensorB = document.querySelector('.sensorB');
-    const $sensorG = document.querySelector('.sensorG');
-
+    const $sensorA = document.getElementById('sensorA');
+    const $sensorB = document.getElementById('sensorB');
+    const $sensorG = document.getElementById('sensorG');
+    
     let socket;
     let peer;
 
@@ -182,14 +182,17 @@
       socket.on('alpha', alpha => {
         console.log(`Received alpha: ${alpha}`);
         $sensorA.innerHTML = `${alpha}`;
+        $saber.style.transform = `rotate(${alpha}deg)`; 
       });
       socket.on('beta', beta => {
         console.log(`Received beta: ${beta}`);
         $sensorB.innerHTML = `${beta}`;
+        $saber.style.left = `${beta}rem`;
       });
       socket.on('gamma', gamma => {
         console.log(`Received gamma: ${gamma}`);
         $sensorG.innerHTML = `${gamma}`;
+        $saber.style.top = `${gamma}rem`;
       });
     };
 
