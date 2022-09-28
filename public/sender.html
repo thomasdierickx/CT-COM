@@ -30,7 +30,7 @@
     <label for="peerSelect" class="label">Select a peer:</label><br />
     <select id="peerSelect" class="form__input"></select><br />
     <form id="msgForm" method="post" action="">
-      <label for="turnOnOff" class="label">Turn On/Off</label><br />
+      <label for="turnOnOff" class="label">Turn sound On/Off</label><br />
       <input type="checkbox" id="turnOnOff" class="form__input" /><br />
       <label for="msgInput" class="label">Type your name</label><br />
       <input id="msgInput" type="text" name="msgInput" class="form__input" /><br />
@@ -38,7 +38,7 @@
       <input id="colorInput" type="color" name="colorInput" class="form__input" /><br />
       <label for="rangeInput" class="label">Pick a range</label><br />
       <input type="range" id="rangeInput" min="10" max="100" value="50"><br />
-      <button type="submit" class="btn">Send Message</button>
+      <button type="submit" class="btn">Send info</button>
     </form>
   </div>
 
@@ -78,7 +78,7 @@
       $msgForm.addEventListener('submit', e => handleSubmitMessage(e));
     };
 
-    let audio = new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/18515/Lightsaber_sound_effect_-_medium_(mp3cut.net).mp3');
+    let audio = new Audio('https://soundimage.org/wp-content/uploads/2016/04/Mad-Voltage.mp3');
     audio.loop = true;
 
     const handleSubmitMessage = e => {

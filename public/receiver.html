@@ -219,11 +219,6 @@
       })
 
       socket.on('orientation', (alpha, beta, gamma) => {
-        // Orientatie weergeven
-        $sensorA.innerHTML = `${alpha}`;
-        $sensorB.innerHTML = `${beta}`;
-        $sensorG.innerHTML = `${gamma}`;
-
         // Gaat naar links of rechts
         $saberOutline.style.left = `${alpha}rem`;
         // Gaat naar boven of beneden
