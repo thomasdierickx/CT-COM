@@ -43,6 +43,10 @@ io.on('connection', socket => {
     io.emit('checkBoxNew', checkBoxNew);
   });
 
+  socket.on('audio', audio => {
+    io.emit('audio', audio);
+  });
+
   socket.on('disconnect', () => {
     delete clients[socket.id];
     io.emit('clients', clients);

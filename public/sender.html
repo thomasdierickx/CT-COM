@@ -78,6 +78,9 @@
       $msgForm.addEventListener('submit', e => handleSubmitMessage(e));
     };
 
+    let audio = new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/18515/Lightsaber_sound_effect_-_medium_(mp3cut.net).mp3');
+    audio.loop = true;
+
     const handleSubmitMessage = e => {
       e.preventDefault();
       socket.emit('message', $msgInput.value);
@@ -90,6 +93,7 @@
         checkBoxNew = true;
         socket.emit('checkBoxNew', checkBoxNew);
         socket.emit('range', saberOn);
+        socket.emit('audio', audio.outerHTML);
       } else {
         let saberOff = 0;
         checkBoxNew = false;
@@ -100,6 +104,10 @@
       $colorInput.value = '';
       $rangeInput.value = '50';
     };
+
+  $checkBox.addEventListener('click', () => {
+      // audio.play();
+    });
 
     window.addEventListener('deviceorientation', e => handleOrientation(e));
       const handleOrientation = (e) => {

@@ -141,14 +141,15 @@
         <p id="sensorA"></p>
         <p id="sensorB"></p>
         <p id="sensorG"></p>
-        <input type="button" id="button"> Click me </input>
+        <!-- <input type="button" id="button"> Click me </input> -->
       </div>
+      <div style="display: none" id="audioDiv"></div>
     </article>
     <article class="right">
       <div class="outline">
         <div class="saber"></div>
         <div class="hilt1"></div>
-        <div class="hilt2"></div>
+        <button class="hilt2" id="hiltBtn">    </button>
       </div>
       <div class="name" id="name"></div>
     </article>
@@ -165,6 +166,8 @@
     const $sensorA = document.getElementById('sensorA');
     const $sensorB = document.getElementById('sensorB');
     const $sensorG = document.getElementById('sensorG');
+    const $audioDiv = document.getElementById('audioDiv');
+    const $hiltBtn = document.getElementById('hiltBtn');
     
     let socket;
     let peer;
@@ -175,16 +178,19 @@
       }]
     };
 
-    const $button = document.getElementById('button');
-    let audio = new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/18515/Lightsaber_sound_effect_-_medium_(mp3cut.net).mp3');
-    audio.loop = true;
-
     const init = async () => {
       initSocket();
-      $button.addEventListener('click', () => {
-        audio.play();
+      socket.on('audio', audio => {
+        audioDiv.innerHTML = audio;
+        let child = audioDiv.firstChild;
+        $hiltBtn.addEventListener('click', () => {
+          child.play();
+          setTimeout(() => {
+            child.pause();
+          }, 300000);
+        })
       });
-      
+
       $otherCamera.addEventListener('click', () => {
         $otherCamera.play();
       });
@@ -206,6 +212,13 @@
 
       socket.on('checkBoxNew', checkBoxNew => {
         console.log(checkBoxNew);
+        // if (checkBoxNew) {
+        //   $hiltBtn.addEventListener('click', () => {
+        //     child.play();
+        //   })
+        // } else {
+        //   child.stop();
+        // }
       })
 
       socket.on('orientation', (alpha, beta, gamma) => {
