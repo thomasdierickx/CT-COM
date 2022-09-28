@@ -127,6 +127,7 @@
       height: 10rem;
 
       position: absolute;
+      transform-origin: center center;
     }
   </style>
 </head>
@@ -183,16 +184,20 @@
       $button.addEventListener('click', () => {
         audio.play();
       });
+      
       $otherCamera.addEventListener('click', () => {
         $otherCamera.play();
       });
+
       socket.on('message', message => {
         $name.innerHTML = `${message}`;
       });
+
       socket.on('color', color => {
         $saber.style.backgroundColor = `${color}`;
         $saber.style.color = `${color}`;
       });
+
       socket.on('range', range => {
         // Verandert de lengte van het saber
         $saber.style.height = `${range}rem`;
@@ -204,9 +209,6 @@
       })
 
       socket.on('orientation', (alpha, beta, gamma) => {
-        // Test of ze worden ingeladen
-        console.log(`Received: ${alpha}, ${beta}, ${gamma}`);
-
         // Orientatie weergeven
         $sensorA.innerHTML = `${alpha}`;
         $sensorB.innerHTML = `${beta}`;
@@ -215,9 +217,9 @@
         // Gaat naar links of rechts
         $saberOutline.style.left = `${alpha}rem`;
         // Gaat naar boven of beneden
-        $saberOutline.style.top = `${beta}rem`
+        $saberOutline.style.top = `${beta}rem`;
         // Saber draait naargelang de gebruiker zijn smartphone draait
-        $saberOutline.style.transform = `rotate(${gamma}deg)`
+        $saberOutline.style.transform = `rotate(${gamma}deg)`;
       })
     };
 
