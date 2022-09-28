@@ -99,10 +99,13 @@
         checkBoxNew = false;
         socket.emit('checkBoxNew', checkBoxNew);
         socket.emit('range', saberOff);
+        let audioOff = '';
+        socket.emit('audio', audioOff);
       }
       $msgInput.value = '';
       $colorInput.value = '';
       $rangeInput.value = '50';
+      audio.innerHTML = "";
     };
 
   $checkBox.addEventListener('click', () => {

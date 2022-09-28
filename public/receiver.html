@@ -188,7 +188,11 @@
           setTimeout(() => {
             child.pause();
           }, 300000);
-        })
+        });
+
+        if (child === null){
+          audioDiv.removeChild(audioDiv.firstChild);
+        };
       });
 
       $otherCamera.addEventListener('click', () => {
@@ -212,13 +216,6 @@
 
       socket.on('checkBoxNew', checkBoxNew => {
         console.log(checkBoxNew);
-        // if (checkBoxNew) {
-        //   $hiltBtn.addEventListener('click', () => {
-        //     child.play();
-        //   })
-        // } else {
-        //   child.stop();
-        // }
       })
 
       socket.on('orientation', (alpha, beta, gamma) => {
